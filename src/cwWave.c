@@ -208,9 +208,7 @@ void cwWaveOpenNextFile(void)
 }
 
 void WavePlayBack(uint32_t AudioFreq)
-{
-  AUDIO_PlaybackBuffer_Status Sound_BufferStatus;
-  
+{  
   printf("WavePlayBack start\n");
   /* Start playing */
   

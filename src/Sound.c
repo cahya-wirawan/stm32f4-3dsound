@@ -174,8 +174,9 @@ int32_t Sound_Position(SOUND_BUFFER_TYPE *dest, const NUMBER_TYPE *src,
 }
 
 int16_t Sound_FillBuffer(FILEINFO *fileInfo) {
-  int32_t i;
+#ifndef SOUND_WINDOWS_FUNCTION_ENABLED
   int32_t half_audio_buffer = SOUND_BUFFER_LENGTH/2;
+#endif
   _Sound_BufferStatus = AUDIO_PlaybackBuffer_GetStatus(0);
   float azimuth;
   static float oldAzimuth = 180.0;

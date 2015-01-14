@@ -66,6 +66,7 @@ uint32_t cwWaveReadUnit(uint8_t *buffer, uint8_t idx, uint8_t NbrOfBytes, Endian
 void cwWaveOpenNextFile(void);
 void WavePlayBack(uint32_t AudioFreq);
 int WavePlayerInit(uint32_t AudioFreq);
+void WavePlayerStart(void);
 void WavePlayerStop(void);
 
 #endif

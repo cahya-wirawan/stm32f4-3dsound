@@ -16,9 +16,10 @@ endif
 
 vpath %.c src 
 
-#CFLAGS  = -g -O2 -Wall -DSTM32F407ZG -DUSE_STDPERIPH_DRIVER
-CFLAGS  = -g -O2 -Wall -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -DHSE_VALUE='((uint32_t)8000000)'
+CFLAGS  = -O2 -Wall
 CFLAGS += -mlittle-endian -mthumb -mthumb-interwork -mcpu=cortex-m4
+CFLAGS += -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -DHSE_VALUE='((uint32_t)8000000)'
+CFLAGS += -DARM_MATH_CM4 -D__FPU_PRESENT
 CFLAGS += -fdata-sections -ffunction-sections
 
 ifeq ($(FLOAT_TYPE), hard)
@@ -41,8 +42,7 @@ SRCS = misc.c stm32f4xx_dma.c stm32f4xx_adc.c \
 	stm32f4xx_usart.c \
 	stm32f4xx_dac.c stm32f4xx_i2c.c stm32f4xx_wwdg.c \
 	stm32f4xx_dbgmcu.c stm32f4xx_iwdg.c \
-	stm32f4xx_dcmi.c stm32f4xx_pwr.c stm32f4xx_rcc.c \
-	stm32f4_discovery_audio_codec.c 
+	stm32f4xx_dcmi.c stm32f4xx_pwr.c stm32f4xx_rcc.c
 
 OBJS = $(SRCS:.c=.o)
 

@@ -41,10 +41,11 @@ int32_t Sound_Copy(uint8_t *dst, uint8_t *src, int32_t length);
 int32_t Sound_Copy_16(int16_t *dst, const int16_t *src, int32_t length);
 int32_t Sound_ToComplexBuffer(NUMBER_TYPE *complexBuffer, NUMBER_TYPE *buffer, int32_t length);
 int32_t Sound_HRTFToComplexBuffer(NUMBER_TYPE *complexBuffer, HRTF_StereoSignal *stereoSignal, int32_t length);
-void Sound_WindowsFunction(NUMBER_TYPE *buffer2, NUMBER_TYPE *buffer1, int32_t length);
+void Sound_WindowsFunction(NUMBER_TYPE *buffer2, int16_t *buffer1, int32_t length);
 void Sound_CleanBuffer(NUMBER_TYPE *buffer, int32_t length);
 void Sound_AddBuffer(NUMBER_TYPE *buffer2, NUMBER_TYPE *buffer1, int32_t length);
 void Sound_CopyBuffer(NUMBER_TYPE *buffer2, NUMBER_TYPE *buffer1, int32_t length);
 void Sound_FillBufferWF(FILEINFO *fileInfo, float azimuth, int16_t bufferPosition);
+void Sound_FillBuffer3D(int16_t *readPtr, float azimuth, int16_t bufferPosition);
 
 #endif

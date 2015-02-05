@@ -13,7 +13,6 @@
 //#include "WavFile.h"
 #include "HrtfDb.h"
 #include "HrtfArray.h"
-#include "ClockCounter.h"
 #include "cwFS.h"
 #include "cwMems.h"
 
@@ -35,12 +34,16 @@
 
 float gAzimuth;
 int8_t _Sound_fEOF; //FlagEndOfFile
-AUDIO_PlaybackBuffer_Status _Sound_BufferStatus;
+///AUDIO_PlaybackBuffer_Status _Sound_BufferStatus;
 SOUND_BUFFER_TYPE _Sound_AudioBuffer[SOUND_BUFFER_LENGTH];
 NUMBER_TYPE _Sound_StereoWavBuffer[SOUND_BUFFER_LENGTH];
 HRTF_StereoSignal _Sound_StereoSignal;
 NUMBER_TYPE _Sound_DoubleBuffer[4*DSP_FFT_SAMPLE_LENGTH];
 uint32_t _Sound_FileOffset;
+
+extern volatile int cwSFBytesLeft;
+extern char *cwSFReadPtr;
+
 
 int16_t Sound_Init(void) {
   int i;
@@ -48,7 +51,7 @@ int16_t Sound_Init(void) {
   for (i=0; i<4*DSP_FFT_SAMPLE_LENGTH; i++) {
     _Sound_DoubleBuffer[i] = 0;
   }
-  _Sound_BufferStatus = LOW_EMPTY | HIGH_EMPTY ;
+  ///_Sound_BufferStatus = LOW_EMPTY | HIGH_EMPTY ;
   _Sound_fEOF = 0;
   _Sound_FileOffset = 0;
   HRTF_Init();
@@ -108,7 +111,7 @@ int32_t Sound_Copy_16(int16_t *dst, const int16_t *src, int32_t length) {
 
 float Sound_GetAzimuth() {
   float azimuth = cwMemsGetAzimuth();
-
+  printf("azimuth: %f\r\n", (double)azimuth);
   return azimuth;
 }
 
@@ -122,7 +125,7 @@ int32_t Sound_Position(SOUND_BUFFER_TYPE *dest, const NUMBER_TYPE *src,
   float32_t sig;
 #endif
 
-  STOPWATCH_START
+///  STOPWATCH_START
 
   HRTF_SoundPosition(&_Sound_StereoSignal, (FPComplex *) src, srcLength, 0, azimuth);
 
@@ -167,12 +170,12 @@ int32_t Sound_Position(SOUND_BUFFER_TYPE *dest, const NUMBER_TYPE *src,
   }
 
   //Sound_Copy_16(dest, _Sound_Sinwave, 2048);
-  STOPWATCH_STOP
-  CycleCounter_Print(0, 130, 10);
+///  STOPWATCH_STOP
+  ///CycleCounter_Print(0, 130, 10);
   printf("minSignal:%d, maxSignal:%d\n", (int)minSignal, (int)maxSignal);
   return currentPos;
 }
-
+#if 0
 int16_t Sound_FillBuffer(FILEINFO *fileInfo) {
 #ifndef SOUND_WINDOWS_FUNCTION_ENABLED
   int32_t half_audio_buffer = SOUND_BUFFER_LENGTH/2;
@@ -242,6 +245,7 @@ int16_t Sound_FillBuffer(FILEINFO *fileInfo) {
 
   return 0;
 }
+#endif
 
 int32_t Sound_ToComplexBuffer(NUMBER_TYPE *complexBuffer, NUMBER_TYPE *buffer, int32_t length) {
   int i;
@@ -263,7 +267,7 @@ int32_t Sound_HRTFToComplexBuffer(NUMBER_TYPE *complexBuffer, HRTF_StereoSignal 
   return length;
 }
 
-void Sound_WindowsFunction(NUMBER_TYPE *buffer2, NUMBER_TYPE *buffer1, int32_t length) {
+void Sound_WindowsFunction(NUMBER_TYPE *buffer2, int16_t *buffer1, int32_t length) {
   int32_t i;
   
   for (i=0; i<length; i++) {
@@ -326,7 +330,7 @@ void Sound_AddBuffer(NUMBER_TYPE *buffer2, NUMBER_TYPE *buffer1, int32_t length)
 #endif
   }
 }
-
+/*
 void Sound_FillBufferWF(FILEINFO *fileInfo, float azimuth, int16_t bufferPosition) {
   NUMBER_TYPE buffer1[SOUND_BUFFER_SAMPLE_LENGTH],
     buffer2[DSP_FFT_SAMPLE_LENGTH];
@@ -368,6 +372,79 @@ void Sound_FillBufferWF(FILEINFO *fileInfo, float azimuth, int16_t bufferPositio
     _Sound_FileOffset = 0;
   else
     _Sound_FileOffset += DSP_FFT_SAMPLE_LENGTH;
+}
+*/
+void Sound_FillBuffer3D(int16_t *readPtr, float azimuth, int16_t bufferPosition) {
+  NUMBER_TYPE *buffer1,
+  buffer2[DSP_FFT_SAMPLE_LENGTH];
+  NUMBER_TYPE complexBuffer1[2*DSP_FFT_SAMPLE_LENGTH];
+  NUMBER_TYPE complexBuffer2[2*DSP_FFT_SAMPLE_LENGTH];
+  /*
+  uint32_t length, readLength;
+  
+  length = 2*SOUND_BUFFER_SAMPLE_LENGTH;
+  readLength = Sound_ReadWavFile_Mono_Offset(fileInfo, buffer1, length, 2*_Sound_FileOffset);
+  */
+  //printf("Sound_FillBuffer3D 1\r\n");
+  //buffer1 = (NUMBER_TYPE *)readPtr;
+  //printf("Sound_FillBuffer3D readPtr:%d\r\n", readPtr[0]);
+  Sound_WindowsFunction(buffer2, readPtr, DSP_FFT_SAMPLE_LENGTH);
+  //printf("Sound_FillBuffer3D 1.1\r\n");
+
+  Sound_ToComplexBuffer(complexBuffer1, buffer2, DSP_FFT_SAMPLE_LENGTH);
+  //printf("Sound_FillBuffer3D 1.2\r\n");
+
+  HRTF_SoundPosition(&_Sound_StereoSignal, (FPComplex *) complexBuffer1, DSP_FFT_SAMPLE_LENGTH, 0, azimuth);
+  //printf("Sound_FillBuffer3D 1.3\r\n");
+
+  Sound_HRTFToComplexBuffer(complexBuffer2, &_Sound_StereoSignal, DSP_FFT_SAMPLE_LENGTH);
+  
+  //printf("Sound_FillBuffer3D 2: %d\r\n", bufferPosition);
+  
+  if(bufferPosition==0) {
+    Sound_CleanBuffer(_Sound_DoubleBuffer+2*DSP_FFT_SAMPLE_LENGTH, 2*DSP_FFT_SAMPLE_LENGTH);
+    //printf("Sound_FillBuffer3D 3\r\n");
+    Sound_AddBuffer(_Sound_DoubleBuffer, complexBuffer2, 2*DSP_FFT_SAMPLE_LENGTH);
+    //printf("Sound_FillBuffer3D 4\r\n");
+    Sound_WindowsFunction(buffer2, readPtr+DSP_FFT_SAMPLE_LENGTH/2, DSP_FFT_SAMPLE_LENGTH);
+    //printf("Sound_FillBuffer3D 5\r\n");
+    Sound_ToComplexBuffer(complexBuffer1, buffer2, DSP_FFT_SAMPLE_LENGTH);
+    //printf("Sound_FillBuffer3D 6\r\n");
+    HRTF_SoundPosition(&_Sound_StereoSignal, (FPComplex *) complexBuffer1, DSP_FFT_SAMPLE_LENGTH, 0, azimuth);
+    //printf("Sound_FillBuffer3D 7\r\n");
+    Sound_HRTFToComplexBuffer(complexBuffer2, &_Sound_StereoSignal, DSP_FFT_SAMPLE_LENGTH);
+    //printf("Sound_FillBuffer3D 8\r\n");
+    Sound_AddBuffer(_Sound_DoubleBuffer+DSP_FFT_SAMPLE_LENGTH, complexBuffer2, 2*DSP_FFT_SAMPLE_LENGTH);
+    //printf("Sound_FillBuffer3D 9\r\n");
+    Sound_CopyToAudioBuffer(_Sound_AudioBuffer, _Sound_DoubleBuffer, 2*DSP_FFT_SAMPLE_LENGTH);
+    //printf("Sound_FillBuffer3D _Sound_AudioBuffer:%x, %d\r\n", _Sound_AudioBuffer, _Sound_AudioBuffer[0]);
+  }
+  else {
+    Sound_CleanBuffer(_Sound_DoubleBuffer, 2*DSP_FFT_SAMPLE_LENGTH);
+    //printf("Sound_FillBuffer3D 11\r\n");
+    Sound_AddBuffer(_Sound_DoubleBuffer+2*DSP_FFT_SAMPLE_LENGTH, complexBuffer2, 2*DSP_FFT_SAMPLE_LENGTH);
+    //printf("Sound_FillBuffer3D 12\r\n");
+    Sound_WindowsFunction(buffer2, readPtr+DSP_FFT_SAMPLE_LENGTH/2, DSP_FFT_SAMPLE_LENGTH);
+    //printf("Sound_FillBuffer3D 13\r\n");
+    Sound_ToComplexBuffer(complexBuffer1, buffer2, DSP_FFT_SAMPLE_LENGTH);
+    //printf("Sound_FillBuffer3D 14\r\n");
+    HRTF_SoundPosition(&_Sound_StereoSignal, (FPComplex *) complexBuffer1, DSP_FFT_SAMPLE_LENGTH, 0, azimuth);
+    //printf("Sound_FillBuffer3D 15\r\n");
+    Sound_HRTFToComplexBuffer(complexBuffer2, &_Sound_StereoSignal, DSP_FFT_SAMPLE_LENGTH);
+    //printf("Sound_FillBuffer3D 16\r\n");
+    Sound_AddBuffer(_Sound_DoubleBuffer+3*DSP_FFT_SAMPLE_LENGTH, complexBuffer2, DSP_FFT_SAMPLE_LENGTH);
+    //printf("Sound_FillBuffer3D 17\r\n");
+    Sound_AddBuffer(_Sound_DoubleBuffer, complexBuffer2+DSP_FFT_SAMPLE_LENGTH, DSP_FFT_SAMPLE_LENGTH);
+    //printf("Sound_FillBuffer3D 18\r\n");
+    Sound_CopyToAudioBuffer(_Sound_AudioBuffer+2*DSP_FFT_SAMPLE_LENGTH, _Sound_DoubleBuffer+2*DSP_FFT_SAMPLE_LENGTH, 2*DSP_FFT_SAMPLE_LENGTH);
+    //printf("Sound_FillBuffer3D _Sound_AudioBuffer:%x, %d\r\n", &_Sound_AudioBuffer[2*DSP_FFT_SAMPLE_LENGTH], _Sound_AudioBuffer[2*DSP_FFT_SAMPLE_LENGTH]);
+  }
+  /*
+  if(readLength != length)
+    _Sound_FileOffset = 0;
+  else
+    _Sound_FileOffset += DSP_FFT_SAMPLE_LENGTH;
+   */
 }
 
 int32_t Sound_ReadWavFile_Stereo(FILEINFO *fileInfo, NUMBER_TYPE *soundBuffer, uint32_t length) {

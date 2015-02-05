@@ -10,7 +10,6 @@
 #include "DSP.h"
 #include "Number.h"
 #include "arm_math.h"
-#include "ClockCounter.h"
 #ifdef CIRCLEOS
 #include "circle_api.h"
 #endif

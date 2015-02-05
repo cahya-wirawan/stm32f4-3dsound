@@ -1,9 +1,7 @@
 //
 //  Number.h
-//  SoundWave
 //
-//  Created by Cahya Wirawan on 1/22/12.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
+//  Created by Cahya Wirawan
 //
 
 #ifndef NUMBER_H

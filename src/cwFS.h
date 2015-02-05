@@ -19,6 +19,6 @@
 
 uint32_t cwFSReadFile(FILEINFO *fileInfo, NUMBER_TYPE *buffer, uint32_t *successcount, uint32_t length);
 void cwFSSeek(FILEINFO *fileInfo,  uint32_t offset);
-uint8_t cwFSScanDir (char* path, char fileList[][CW_FS_MAX_FILENAME]);
+///uint8_t cwFSScanDir (char* path, char fileList[][CW_FS_MAX_FILENAME]);
 
 #endif /* CW_FILESYSTEM_H_ */

@@ -4,6 +4,7 @@
  *  Author: Cahya Wirawan
  */
 
+#include "stdio.h"
 #include "cwMems.h"
 #include "HrtfDb.h"
 #include "tm_stm32f4_lis302dl_lis3dsh.h"

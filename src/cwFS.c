@@ -31,6 +31,7 @@ void cwFSSeek(FILEINFO *fileInfo,  uint32_t offset)
   f_lseek(fileInfo, offset);
 }
 
+#if 0
 uint8_t cwFSScanDir (char* path, char fileList[][CW_WAVE_MAX_FILENAME])
 {
   FRESULT res;
@@ -41,6 +42,7 @@ uint8_t cwFSScanDir (char* path, char fileList[][CW_WAVE_MAX_FILENAME])
 
   fileCounter = 0;
   res = f_opendir(&dir, path);                       /* Open the directory */
+  printf("result %d", res);
   if (res == FR_OK) {
     for (;;) {
       res = f_readdir(&dir, &fno);                   /* Read a directory item */
@@ -61,3 +63,4 @@ uint8_t cwFSScanDir (char* path, char fileList[][CW_WAVE_MAX_FILENAME])
 
   return fileCounter;
 }
+#endif

@@ -1,4 +1,3 @@
-
 #ifndef SINWAVE_H
 #define SINWAVE_H
 

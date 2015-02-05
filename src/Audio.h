@@ -1,20 +1,47 @@
-/*
- * Audio.h
- *
- *  Created on: Apr 25, 2012
- *      Author: Cahya Wirawan
- */
+#ifndef __AUDIO_H__
+#define __AUDIO_H__
 
-#ifndef AUDIO_H_
-#define AUDIO_H_
+#include <stdint.h>
+#include <stdbool.h>
 
-typedef enum {
-	FULL = 0,
-	LOW_EMPTY = 1,
-	HIGH_EMPTY = 2
-} AUDIO_PlaybackBuffer_Status;
+typedef void AudioCallbackFunction(void *context,int buffer);
 
-AUDIO_PlaybackBuffer_Status AUDIO_PlaybackBuffer_GetStatus( AUDIO_PlaybackBuffer_Status value );
-AUDIO_PlaybackBuffer_Status AUDIO_PlaybackBuffer_SetStatus( AUDIO_PlaybackBuffer_Status value );
+#define Audio8000HzSettings 256,5,12,1
+#define Audio16000HzSettings 213,2,13,0
+#define Audio32000HzSettings 213,2,6,1
+#define Audio48000HzSettings 258,3,3,1
+#define Audio96000HzSettings 344,2,3,1
+#define Audio22050HzSettings 429,4,9,1
+#define Audio44100HzSettings 271,2,6,0
+#define AudioVGAHSyncSettings 419,2,13,0 // 31475.3606. Actual VGA timer is 31472.4616.
 
-#endif /* AUDIO_H_ */
+// Initialize and power up audio hardware. Use the above defines for the parameters.
+// Can probably only be called once.
+void InitializeAudio(int plln,int pllr,int i2sdiv,int i2sodd);
+
+// Power up and down the audio hardware.
+void AudioOn();
+void AudioOff();
+
+// Set audio volume in steps of 0.5 dB. 0xff is +12 dB.
+void SetAudioVolume(int volume);
+
+// Output one audio sample directly to the hardware without using DMA.
+void OutputAudioSample(int16_t sample);
+void OutputAudioSampleWithoutBlocking(int16_t sample);
+
+// Start and stop audio playback using DMA.
+// Callback is optional, and called whenever a new buffer is needed.
+void PlayAudioWithCallback(AudioCallbackFunction *callback,void *context);
+void StopAudio();
+
+// Provide a new buffer to the audio DMA. Output is double buffered, so
+// at least two buffers must be maintained by the program. It is not allowed
+// to overwrite the previously provided buffer until after the next callback
+// invocation.
+// Buffers must reside in DMA1-accessible memory, that is, the 128k RAM bank,
+// or flash.
+void ProvideAudioBuffer(void *samples,int numsamples);
+bool ProvideAudioBufferWithoutBlocking(void *samples,int numsamples);
+
+#endif

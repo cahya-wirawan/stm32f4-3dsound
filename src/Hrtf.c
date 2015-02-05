@@ -6,6 +6,7 @@
 
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <math.h>
 #include "Hrtf.h"
 #include "HrtfArray.h"
@@ -30,15 +31,19 @@ void HRTF_ReadDb(HRTF_StereoSignal *hrtfDb, float elevation, float azimuth, int 
   else if(elevation>HRTF_ELEVATION_MAX)
     elevation = HRTF_ELEVATION_MAX;
   
+  //printf("HRTF_ReadDb 1\r\n");
   hrtfElevationIndex = (int) round((elevation-HRTF_ELEVATION_MIN)/10.0);
   azimuth = abs(azimuth);  
   if(azimuth>HrtfArrayAzimuthMax[hrtfElevationIndex])
-      azimuth = HrtfArrayAzimuthMax[hrtfElevationIndex];
+    azimuth = HrtfArrayAzimuthMax[hrtfElevationIndex];
+  //printf("HRTF_ReadDb 2\r\n");
   
   hrtfAzimuthIndex = (int) round(azimuth*(HrtfArrayOffset[hrtfElevationIndex+1]-HrtfArrayOffset[hrtfElevationIndex]-1)/HrtfArrayAzimuthMax[hrtfElevationIndex]);
+  //printf("HRTF_ReadDb 3\r\n");
   
   leftArray = &HrtfArray[HrtfArrayOffset[hrtfElevationIndex]+hrtfAzimuthIndex][0][0];
   rightArray = &HrtfArray[HrtfArrayOffset[hrtfElevationIndex]+hrtfAzimuthIndex][1][0];
+  //printf("HRTF_ReadDb 4\r\n");
   if(flip) {
     tmpArray = leftArray;
     leftArray = rightArray;
@@ -49,15 +54,21 @@ void HRTF_ReadDb(HRTF_StereoSignal *hrtfDb, float elevation, float azimuth, int 
     hrtfDb->left[i][1] = 0;
     hrtfDb->right[i][0] = rightArray[i];
     hrtfDb->right[i][1] = 0;
+    //printf("HRTF_ReadDb 5: %d\r\n", i);
     //printf("hrtf %d: %d, %d\n", i, leftArray[i], rightArray[i]);
   }
+  
+  //printf("HRTF_ReadDb 5.1: %d\r\n", i);
   
   for( i = HRTF_ARRAY_LENGTH ; i < sampleLength ; i++ ) {
     hrtfDb->left[i][0] = 0.0;
     hrtfDb->left[i][1] = 0.0;
     hrtfDb->right[i][0] = 0.0;
     hrtfDb->right[i][1] = 0.0;
+    //printf("HRTF_ReadDb 6: %d/%d\r\n", i, sampleLength);
   }
+
+  //printf("HRTF_ReadDb 7: %d\r\n", i);
 }
 
 void HRTF_GetDb(FPComplex **hrtfLeft, FPComplex **hrtfRight, float elevation, float azimuth, int sampleLength) {
@@ -94,6 +105,7 @@ void HRTF_GetDb(FPComplex **hrtfLeft, FPComplex **hrtfRight, float elevation, fl
 #ifdef HRTF_DB_ENABLED
 
 void HRTF_SoundPosition(HRTF_StereoSignal *stereoSignal, FPComplex *signal, int length, float elevation, float azimuth) {
+  printf("HRTF_SoundPosition  HRTF_DB_ENABLED 1\r\n");
   FPComplex hrtfSignal[DSP_FFT_SAMPLE_LENGTH], *hrtfLeft, *hrtfRight, hrtfOutputSignal[DSP_FFT_SAMPLE_LENGTH];
   
   HRTF_GetDb(&hrtfLeft, &hrtfRight, elevation, azimuth, length);
@@ -112,15 +124,21 @@ void HRTF_SoundPosition(HRTF_StereoSignal *stereoSignal, FPComplex *signal, int 
 #else
 
 void HRTF_SoundPosition(HRTF_StereoSignal *stereoSignal, FPComplex *signal, int length, float elevation, float azimuth) {
+  //printf("HRTF_SoundPosition disabled\r\n");
   FPComplex fp1[DSP_FFT_SAMPLE_LENGTH], fp2[DSP_FFT_SAMPLE_LENGTH], fp3[DSP_FFT_SAMPLE_LENGTH];
   //int i;
   
+  //printf("HRTF_SoundPosition 1\r\n");
   HRTF_StereoSignal *hrtfDb;
 
   hrtfDb = (HRTF_StereoSignal *)stereoSignal;
+  //printf("HRTF_SoundPosition 2\r\n");
   HRTF_ReadDb(hrtfDb, elevation, azimuth, length);
+  //printf("HRTF_SoundPosition 3\r\n");
   DSP_Zeros(fp1);
+  //printf("HRTF_SoundPosition 4\r\n");
   DSP_Fft(fp1, signal);
+  //printf("HRTF_SoundPosition 5\r\n");
 
   /*
   for (i=0; i<DSP_FFT_SAMPLE_LENGTH; i++) {
@@ -134,7 +152,9 @@ void HRTF_SoundPosition(HRTF_StereoSignal *stereoSignal, FPComplex *signal, int 
 #ifdef TEST_REAL
   /** Test **/
   DSP_Zeros(fp2);
+  printf("HRTF_SoundPosition 6\r\n");
   DSP_Ifft(fp2, fp1);
+  printf("HRTF_SoundPosition 7\r\n");
 
   for (i=0; i<DSP_FFT_SAMPLE_LENGTH; i++) {
 #ifdef FIXED_POINT
@@ -145,9 +165,12 @@ void HRTF_SoundPosition(HRTF_StereoSignal *stereoSignal, FPComplex *signal, int 
   }
   /** Test **/
 #endif
-
+  
+  //printf("HRTF_SoundPosition 8\r\n");
   DSP_Zeros(fp2);
+  //printf("HRTF_SoundPosition 9\r\n");
   DSP_Fft(fp2, hrtfDb->left);
+  //printf("HRTF_SoundPosition 10\r\n");
   /*
   for (i=0; i<DSP_FFT_SAMPLE_LENGTH; i++) {
 #ifdef FIXED_POINT
@@ -158,8 +181,11 @@ void HRTF_SoundPosition(HRTF_StereoSignal *stereoSignal, FPComplex *signal, int 
   }
   */
   DSP_Zeros(fp3);
+  //printf("HRTF_SoundPosition 11\r\n");
   DSP_ComplexArrayMultiply(fp3, fp2, fp1, length);
+  //printf("HRTF_SoundPosition 12\r\n");
   DSP_Ifft(stereoSignal->left, fp3);
+  //printf("HRTF_SoundPosition 13\r\n");
   /*
   for (i=0; i<DSP_FFT_SAMPLE_LENGTH; i++) {
 #ifdef FIXED_POINT
@@ -170,6 +196,7 @@ void HRTF_SoundPosition(HRTF_StereoSignal *stereoSignal, FPComplex *signal, int 
   }
   */
   DSP_Fft(fp2, hrtfDb->right);
+  //printf("HRTF_SoundPosition 14\r\n");
   /*
   for (i=0; i<DSP_FFT_SAMPLE_LENGTH; i++) {
 #ifdef FIXED_POINT
@@ -180,7 +207,9 @@ void HRTF_SoundPosition(HRTF_StereoSignal *stereoSignal, FPComplex *signal, int 
   }
   */
   DSP_ComplexArrayMultiply(fp3, fp2, fp1, length);
+  //printf("HRTF_SoundPosition 15\r\n");
   DSP_Ifft(stereoSignal->right, fp3);
+  //printf("HRTF_SoundPosition 16\r\n");
   /*
   for (i=0; i<DSP_FFT_SAMPLE_LENGTH; i++) {
 #ifdef FIXED_POINT

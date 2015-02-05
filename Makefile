@@ -6,7 +6,7 @@ SRCS = main.c stm32f4xx_it.c system_stm32f4xx.c syscalls.c \
 
 # Project name
 
-PROJ_NAME=stm32f4-musicplayer
+PROJ_NAME=stm32f4-3dsound
 OUTPATH=build
 
 ###################################################
@@ -28,13 +28,12 @@ CC=arm-none-eabi-gcc
 OBJCOPY=arm-none-eabi-objcopy
 SIZE=arm-none-eabi-size
 
-CFLAGS  = -std=gnu90 -Wall -Tstm32_flash.ld
+CFLAGS  = -std=gnu90 -O2 -Wall -Tstm32_flash.ld
 CFLAGS += -mlittle-endian -mthumb -mthumb-interwork -mcpu=cortex-m4
 #CFLAGS += -mlittle-endian -mthumb -mthumb-interwork -nostartfiles -mcpu=cortex-m4
 CFLAGS += -DSTM32F40_41xxx -DSTM32F407VG -DUSE_STDPERIPH_DRIVER -DHSE_VALUE='((uint32_t)8000000)'
 CFLAGS += -DARM_MATH_CM4 -D__FPU_PRESENT
-#CFLAGS += -fstack-usage -fstack-check
-#CFLAGS += -DSTM32F407VG -DUSE_STDPERIPH_DRIVER
+CFLAGS += -fdata-sections -ffunction-sections
 
 ifeq ($(FLOAT_TYPE), hard)
 CFLAGS += -fsingle-precision-constant -Wdouble-promotion
@@ -74,7 +73,6 @@ proj: 	$(OUTPATH)/$(PROJ_NAME).elf
 $(OUTPATH)/$(PROJ_NAME).elf: $(SRCS)
 	mkdir -p $(OUTPATH)
 	$(CC) $(CFLAGS) $^ -o $@ -Llib -lfatfs -lstm32f4-tm -lusbmschost -lstm32-dsp -lstm32f4 -lm -Wl,--gc-sections
-	#$(CC) $(CFLAGS) $^ -o $@ -Llib -lfatfs -lstm32f4-tm -lusbmschost -lstm32-dsp -lstm32f4 -lm
 	$(OBJCOPY) -O ihex $(OUTPATH)/$(PROJ_NAME).elf $(OUTPATH)/$(PROJ_NAME).hex
 	$(OBJCOPY) -O binary $(OUTPATH)/$(PROJ_NAME).elf $(OUTPATH)/$(PROJ_NAME).bin
 

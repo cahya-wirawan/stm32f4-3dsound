@@ -24,6 +24,8 @@
 #include "cwSoundFile.h"
 #include "cwMems.h"
 
+#define CW_VERSION "20150205.01"
+
 void hwInit();
 
 int main(void) {
@@ -78,7 +80,7 @@ void hwInit() {
   }
   cwMemsInit();
   printf("\r\n");
-  printf("3D Sound Player by Cahya Wirawan <cahya.wirawan@gmail.com>\r\n");
+  printf("3D Sound Player (version %s) by Cahya Wirawan <cahya.wirawan@gmail.com>\r\n", CW_VERSION);
   printf("Peripheries initialised\r\n");
   Delayms(1000);
 }

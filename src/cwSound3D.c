@@ -20,8 +20,12 @@ extern volatile int cwSFBytesLeft;
 extern char *cwSFReadPtr;
 
 WAVE_FormatTypeDef cwS3DFormat;
-int16_t *cwS3DAudioBuffer;
 uint32_t cwWaveDataLength = 0;
+
+int16_t cwS3DAudioBuffer[SOUND_BUFFER_LENGTH];
+NUMBER_TYPE cwS3DStereoWavBuffer[SOUND_BUFFER_LENGTH];
+HRTF_StereoSignal cwS3DStereoSignal;
+NUMBER_TYPE cwS3DDoubleBuffer[4*DSP_FFT_SAMPLE_LENGTH];
 
 void cwS3DPlayFile(char* filename) {
   unsigned int br, btr;
@@ -44,8 +48,7 @@ void cwS3DPlayFile(char* filename) {
     }
 
     cwWaveDataLength = cwS3DFormat.FileSize;
-    cwS3DAudioBuffer = Sound_Get_AudioBuffer();
-    Sound_Init();
+    cwS3DInit();
 
     res = f_read(&cwSFFile, cwSFFileReadBuffer, CW_FS_FILE_READ_BUFFER_SIZE, &br);
     InitializeAudio(Audio44100HzSettings);
@@ -62,7 +65,6 @@ void cwS3DPlayFile(char* filename) {
        * Getting audio callbacks while the next part of the file is read from the
        * file system should not cause problems.
        */
-      //printf("cwSFBytesLeft : %d\r\n", cwSFBytesLeft);
       // Out of data or error or user button... Stop playback!
       if (cwSFBytesLeft < (CW_FS_FILE_READ_BUFFER_SIZE / 2)) {
         // Copy rest of data to beginning of read buffer
@@ -103,33 +105,28 @@ void cwS3DPlayFile(char* filename) {
 /*
  * Called by the audio driver when it is time to provide data to
  * one of the audio buffers (while the other buffer is sent to the
- * CODEC using DMA). One mp3 frame is decoded at a time and
+ * CODEC using DMA). One frame is decoded at a time and
  * provided to the audio driver.
  */
-void cwS3DAudioCallback(void *context, int buffer) {
+void cwS3DAudioCallback(void *context, int bufferPosition) {
   int16_t *readPtr;
   int byteSent;
-  int i;
   
   int outOfData = 0;
   
-  //printf("cwS3DAudioCallback 1\r\n");
-  
   int16_t *samples;
-  if (buffer==0) {
-    //printf("cwS3DAudioCallback 1.5 buffer:%d\r\n", buffer);
+  if (bufferPosition==0) {
     samples = cwS3DAudioBuffer;
     TM_DISCO_LedOn(LED_RED);
     TM_DISCO_LedOff(LED_GREEN);
   } else {
-    //printf("cwS3DAudioCallback 1.5 buffer:%d\r\n", buffer);
     samples = cwS3DAudioBuffer + SOUND_BUFFER_LENGTH/2;
     TM_DISCO_LedOff(LED_RED);
     TM_DISCO_LedOn(LED_GREEN);
   }
-  //printf("cwSFReadPtr : %x\r\n", cwSFReadPtr);
   readPtr = (int16_t*)cwSFReadPtr;
 #if 0
+  int i;
   if(cwS3DFormat.NbrChannels == 1) {
     // If it is mono sound:
     for (i=0; i<CW_WAVE_BYTES_TO_SEND/2; i++) {
@@ -140,20 +137,9 @@ void cwS3DAudioCallback(void *context, int buffer) {
     cwSFBytesLeft -= CW_WAVE_BYTES_TO_SEND;
     cwSFReadPtr += CW_WAVE_BYTES_TO_SEND;
   }
-  //printf("cwS3DAudioCallback 3.1\r\n");
 #else
-  //printf("cwS3DAudioCallback 4\r\n");
   float azimuth = cwMemsGetAzimuth();
-  //int iAzimuth = (int) azimuth;
-  //printf("azimuth Y: %d\r\n", iAzimuth);
-  if (buffer==0) {
-    //printf("cwS3DAudioCallback 5\r\n");
-    Sound_FillBuffer3D(readPtr, azimuth, 0);
-  }
-  else {
-    //printf("cwS3DAudioCallback 6\r\n");
-    Sound_FillBuffer3D(readPtr, azimuth, 1);
-  }
+  cwS3DFillBuffer(readPtr, azimuth, bufferPosition);
   
   byteSent = CW_WAVE_BYTES_TO_SEND;
   cwSFBytesLeft -= CW_WAVE_BYTES_TO_SEND;
@@ -161,8 +147,58 @@ void cwS3DAudioCallback(void *context, int buffer) {
 
 #endif
   if (!outOfData) {
-    //printf("cwS3DAudioCallback 7, byteSent: %d, addr: %x, samples[0]=%d\r\n", byteSent, &samples[0], samples[0]);
     ProvideAudioBuffer(samples, byteSent);
-    //printf("cwS3DAudioCallback 8\r\n");
+  }
+}
+
+/*
+ *******
+ *******
+ */
+
+
+int16_t cwS3DInit(void) {
+  int i;
+  
+  for (i=0; i<4*DSP_FFT_SAMPLE_LENGTH; i++) {
+    cwS3DDoubleBuffer[i] = 0;
+  }
+  HRTF_Init();
+  return 1;
+}
+
+void cwS3DFillBuffer(int16_t *readPtr, float azimuth, int16_t bufferPosition) {
+  NUMBER_TYPE buffer2[DSP_FFT_SAMPLE_LENGTH];
+  NUMBER_TYPE complexBuffer1[2*DSP_FFT_SAMPLE_LENGTH];
+  NUMBER_TYPE complexBuffer2[2*DSP_FFT_SAMPLE_LENGTH];
+
+  Sound_WindowsFunction(buffer2, readPtr, DSP_FFT_SAMPLE_LENGTH);
+  
+  Sound_ToComplexBuffer(complexBuffer1, buffer2, DSP_FFT_SAMPLE_LENGTH);
+  
+  HRTF_SoundPosition(&cwS3DStereoSignal, (FPComplex *) complexBuffer1, DSP_FFT_SAMPLE_LENGTH, 0, azimuth);
+  
+  Sound_HRTFToComplexBuffer(complexBuffer2, &cwS3DStereoSignal, DSP_FFT_SAMPLE_LENGTH);
+  
+  if(bufferPosition==0) {
+    Sound_CleanBuffer(cwS3DDoubleBuffer+2*DSP_FFT_SAMPLE_LENGTH, 2*DSP_FFT_SAMPLE_LENGTH);
+    Sound_AddBuffer(cwS3DDoubleBuffer, complexBuffer2, 2*DSP_FFT_SAMPLE_LENGTH);
+    Sound_WindowsFunction(buffer2, readPtr+DSP_FFT_SAMPLE_LENGTH/2, DSP_FFT_SAMPLE_LENGTH);
+    Sound_ToComplexBuffer(complexBuffer1, buffer2, DSP_FFT_SAMPLE_LENGTH);
+    HRTF_SoundPosition(&cwS3DStereoSignal, (FPComplex *) complexBuffer1, DSP_FFT_SAMPLE_LENGTH, 0, azimuth);
+    Sound_HRTFToComplexBuffer(complexBuffer2, &cwS3DStereoSignal, DSP_FFT_SAMPLE_LENGTH);
+    Sound_AddBuffer(cwS3DDoubleBuffer+DSP_FFT_SAMPLE_LENGTH, complexBuffer2, 2*DSP_FFT_SAMPLE_LENGTH);
+    Sound_CopyToAudioBuffer(cwS3DAudioBuffer, cwS3DDoubleBuffer, 2*DSP_FFT_SAMPLE_LENGTH);
+  }
+  else {
+    Sound_CleanBuffer(cwS3DDoubleBuffer, 2*DSP_FFT_SAMPLE_LENGTH);
+    Sound_AddBuffer(cwS3DDoubleBuffer+2*DSP_FFT_SAMPLE_LENGTH, complexBuffer2, 2*DSP_FFT_SAMPLE_LENGTH);
+    Sound_WindowsFunction(buffer2, readPtr+DSP_FFT_SAMPLE_LENGTH/2, DSP_FFT_SAMPLE_LENGTH);
+    Sound_ToComplexBuffer(complexBuffer1, buffer2, DSP_FFT_SAMPLE_LENGTH);
+    HRTF_SoundPosition(&cwS3DStereoSignal, (FPComplex *) complexBuffer1, DSP_FFT_SAMPLE_LENGTH, 0, azimuth);
+    Sound_HRTFToComplexBuffer(complexBuffer2, &cwS3DStereoSignal, DSP_FFT_SAMPLE_LENGTH);
+    Sound_AddBuffer(cwS3DDoubleBuffer+3*DSP_FFT_SAMPLE_LENGTH, complexBuffer2, DSP_FFT_SAMPLE_LENGTH);
+    Sound_AddBuffer(cwS3DDoubleBuffer, complexBuffer2+DSP_FFT_SAMPLE_LENGTH, DSP_FFT_SAMPLE_LENGTH);
+    Sound_CopyToAudioBuffer(cwS3DAudioBuffer+2*DSP_FFT_SAMPLE_LENGTH, cwS3DDoubleBuffer+2*DSP_FFT_SAMPLE_LENGTH, 2*DSP_FFT_SAMPLE_LENGTH);
   }
 }

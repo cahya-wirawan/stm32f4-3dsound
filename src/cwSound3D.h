@@ -14,5 +14,7 @@
 
 void cwS3DPlayFile(char* filename);
 void cwS3DAudioCallback(void *context,int buffer);
+void cwS3DFillBuffer(int16_t *readPtr, float azimuth, int16_t bufferPosition);
+int16_t cwS3DInit(void);
 
 #endif /* defined(__CW_SOUND3D__) */

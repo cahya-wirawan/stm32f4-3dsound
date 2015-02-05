@@ -35,16 +35,16 @@
 float gAzimuth;
 int8_t _Sound_fEOF; //FlagEndOfFile
 ///AUDIO_PlaybackBuffer_Status _Sound_BufferStatus;
-SOUND_BUFFER_TYPE _Sound_AudioBuffer[SOUND_BUFFER_LENGTH];
-NUMBER_TYPE _Sound_StereoWavBuffer[SOUND_BUFFER_LENGTH];
-HRTF_StereoSignal _Sound_StereoSignal;
-NUMBER_TYPE _Sound_DoubleBuffer[4*DSP_FFT_SAMPLE_LENGTH];
+///SOUND_BUFFER_TYPE _Sound_AudioBuffer[SOUND_BUFFER_LENGTH];
+///NUMBER_TYPE _Sound_StereoWavBuffer[SOUND_BUFFER_LENGTH];
+///HRTF_StereoSignal _Sound_StereoSignal;
+///NUMBER_TYPE _Sound_DoubleBuffer[4*DSP_FFT_SAMPLE_LENGTH];
 uint32_t _Sound_FileOffset;
 
 extern volatile int cwSFBytesLeft;
 extern char *cwSFReadPtr;
 
-
+#if 0
 int16_t Sound_Init(void) {
   int i;
 
@@ -57,6 +57,7 @@ int16_t Sound_Init(void) {
   HRTF_Init();
   return 1;
 }
+#endif
 
 const NUMBER_TYPE _Sound_HannWindowsFunction [] =
 {
@@ -68,6 +69,7 @@ const NUMBER_TYPE _Sound_Sinwave [] =
 #include "Sinwave.h"
 };
 
+#if 0
 int16_t *Sound_Get_AudioBuffer(void) {
   return _Sound_AudioBuffer;
 }
@@ -75,6 +77,7 @@ int16_t *Sound_Get_AudioBuffer(void) {
 int32_t Sound_Get_AudioBuffer_Size(void) { 
   return SOUND_BUFFER_LENGTH;
 }
+#endif
 
 int32_t Sound_Read(int16_t *dest, const int16_t *src, int32_t destLength, int32_t srcLength) {
   int32_t i, j, blockLength, currentPos;
@@ -114,6 +117,8 @@ float Sound_GetAzimuth() {
   printf("azimuth: %f\r\n", (double)azimuth);
   return azimuth;
 }
+
+#if 0
 
 int32_t Sound_Position(SOUND_BUFFER_TYPE *dest, const NUMBER_TYPE *src,
     int32_t srcLength, float elevation, float azimuth) {
@@ -175,6 +180,8 @@ int32_t Sound_Position(SOUND_BUFFER_TYPE *dest, const NUMBER_TYPE *src,
   printf("minSignal:%d, maxSignal:%d\n", (int)minSignal, (int)maxSignal);
   return currentPos;
 }
+#endif
+
 #if 0
 int16_t Sound_FillBuffer(FILEINFO *fileInfo) {
 #ifndef SOUND_WINDOWS_FUNCTION_ENABLED
@@ -374,6 +381,7 @@ void Sound_FillBufferWF(FILEINFO *fileInfo, float azimuth, int16_t bufferPositio
     _Sound_FileOffset += DSP_FFT_SAMPLE_LENGTH;
 }
 */
+#if 0
 void Sound_FillBuffer3D(int16_t *readPtr, float azimuth, int16_t bufferPosition) {
   NUMBER_TYPE *buffer1,
   buffer2[DSP_FFT_SAMPLE_LENGTH];
@@ -446,7 +454,9 @@ void Sound_FillBuffer3D(int16_t *readPtr, float azimuth, int16_t bufferPosition)
     _Sound_FileOffset += DSP_FFT_SAMPLE_LENGTH;
    */
 }
+#endif
 
+#if 0
 int32_t Sound_ReadWavFile_Stereo(FILEINFO *fileInfo, NUMBER_TYPE *soundBuffer, uint32_t length) {
   uint32_t i, j, halfLength;
   NUMBER_TYPE monoWavBuffer[2*DSP_FFT_SAMPLE_LENGTH];
@@ -489,3 +499,4 @@ int32_t Sound_ReadWavFile_Mono_Offset(FILEINFO *fileInfo, NUMBER_TYPE *soundBuff
   cwFSReadFile(fileInfo, soundBuffer, &readLength, length);
   return readLength;
 }
+#endif

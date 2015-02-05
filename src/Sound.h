@@ -47,5 +47,6 @@ void Sound_AddBuffer(NUMBER_TYPE *buffer2, NUMBER_TYPE *buffer1, int32_t length)
 void Sound_CopyBuffer(NUMBER_TYPE *buffer2, NUMBER_TYPE *buffer1, int32_t length);
 void Sound_FillBufferWF(FILEINFO *fileInfo, float azimuth, int16_t bufferPosition);
 void Sound_FillBuffer3D(int16_t *readPtr, float azimuth, int16_t bufferPosition);
+void Sound_CopyToAudioBuffer(SOUND_BUFFER_TYPE *buffer2, NUMBER_TYPE *buffer1, int32_t length) ;
 
 #endif

@@ -68,15 +68,9 @@ FRESULT cwSFPlayDirectory (const char* path, unsigned char seek) {
           continue;
         }
         printf("Play file: %s with 3D Sound:%d\r\n", buffer, SOUND3D_ENABLED);
-#if SOUND3D_ENABLED
-        if(strcasecmp("wav", cwSFGetFilenameExt(buffer)) == 0) {
-          cwS3DPlayFile(buffer);
-        }
-#else
         if(strcasecmp("wav", cwSFGetFilenameExt(buffer)) == 0) {
           cwWavePlayFile(buffer);
         }
-#endif
       }
     }
   }

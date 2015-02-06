@@ -78,10 +78,14 @@ void cwS3DPlayFile(char* filename) {
         res = f_read(&cwSFFile, cwSFFileReadBuffer + cwSFBytesLeft, btr, &br);
         
         // Update the bytes left variable
-        cwSFBytesLeft = CW_FS_FILE_READ_BUFFER_SIZE;
+        cwSFBytesLeft += br;
         
-        // Out of data or error or user button... Stop playback!
-        if (br < btr || res != FR_OK || TM_DISCO_ButtonPressed()) {
+        // End of song: start over from the begining
+        if(br < btr) {
+          res = f_lseek(&cwSFFile, sizeof(cwS3DFormat));
+        }
+        // Error or user button... next song!
+        if (res != FR_OK || TM_DISCO_ButtonPressed()) {
           StopAudio();
           
           // Re-initialize and set volume to avoid noise

@@ -1,7 +1,7 @@
 # Sources
 
 SRCS = main.c stm32f4xx_it.c system_stm32f4xx.c syscalls.c \
-	Audio.c cwSoundFile.c cwMemory.c cwWave.c cwSound3D.c \
+	Audio.c cwSoundFile.c cwWave.c cwSound3D.c \
 	Hrtf.c HrtfArray.c HrtfDb.c Audio.c DSP.c cwMems.c
 
 # Project name

@@ -1,6 +1,6 @@
 /**
- *  STM32F4 template project with LED, Button, MEMS and USB FATFS
- *  using libraries from http://stm32f4-discovery.com
+ *  STM32F4-3DSound
+ *  3D Sound effect on stm32f4
  *
  *  @author		Cahya Wirawan
  *  @email		cahya at gmx.at
@@ -14,7 +14,7 @@
 #include "main.h"
 /* Include core modules */
 #include "stm32f4xx.h"
-/* Great STM32f4 libraries created by Tilen Majerle */
+/* STM32f4 libraries created by Tilen Majerle */
 #include "tm_stm32f4_disco.h"
 #include "tm_stm32f4_delay.h"
 #include "tm_stm32f4_usart.h"
@@ -23,10 +23,6 @@
 #include "tm_stm32f4_usb_msc_host.h"
 #include "cwSoundFile.h"
 #include "cwMems.h"
-
-#define CW_VERSION "20150205.01"
-
-void hwInit();
 
 int main(void) {
   hwInit();

@@ -1,19 +1,16 @@
 /*
- *  HrtfArray.c
+ *  cwHrtfArray.c
  *  
- *
- *  Created by Cahya Wirawan on 10/22/11.
- *  Copyright 2011 __MyCompanyName__. All rights reserved.
  *
  */
 
-#include "HrtfArray.h"
+#include "cwHrtfArray.h"
 
 #ifndef HRTF_COMPLETE_DB
 
-const int16_t HrtfArrayAzimuthMax[] = {90, 0};
-const int16_t HrtfArrayOffset[] = {0, 19};
-const int16_t HrtfArray[][2][HRTF_ARRAY_LENGTH] =
+const int16_t cwHrtfArrayAzimuthMax[] = {90, 0};
+const int16_t cwHrtfArrayOffset[] = {0, 19};
+const int16_t cwHrtfArray[][2][CW_HRTF_ARRAY_LENGTH] =
 { 
   {
     {

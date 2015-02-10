@@ -1,13 +1,12 @@
 //
-//  WindowsFunction.h
+//  cwWindowsFunction.h
 //  EchoLocalization
 //
-//  Created by Cahya Wirawan on 3/13/12.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
+//  Created by Cahya Wirawan
 //
 
-#ifndef WINDOWSFUNCTION_H
-#define WINDOWSFUNCTION_H
+#ifndef __CW_WINDOWSFUNCTION_H__
+#define __CW_WINDOWSFUNCTION_H__
 
 #ifdef FIXED_POINT
 0, 0, 1, 3, 5, 8, 11, 15, 

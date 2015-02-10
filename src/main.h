@@ -8,7 +8,7 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#define CW_VERSION "20150207.01"
+#define CW_VERSION "20150210.03"
 
 void hwInit();
 

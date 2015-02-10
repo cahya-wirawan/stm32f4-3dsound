@@ -6,8 +6,9 @@
 
 #include "stdio.h"
 #include "cwMems.h"
-#include "HrtfDb.h"
 #include "tm_stm32f4_lis302dl_lis3dsh.h"
+
+#define CW_MEMS_AZIMUTH_MAX 90
 
 TM_LIS302DL_LIS3DSH_t cwMemsOffset;
 
@@ -23,6 +24,6 @@ float cwMemsGetAzimuth(void) {
   
   azimuth = (float)(axesData.X - cwMemsOffset.X)/CW_MEMS_MAX_VALUE;
   azimuth = (azimuth>1.0)? 1.0:((azimuth<-1.0)?-1.0:azimuth);
-  azimuth *= HRTF_AZIMUTH_MAX;
+  azimuth *= CW_MEMS_AZIMUTH_MAX;
   return azimuth;
 }

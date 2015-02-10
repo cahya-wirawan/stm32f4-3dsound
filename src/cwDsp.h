@@ -6,10 +6,10 @@
 //
 //
 
-#ifndef ____CW_DSP__
-#define ____CW_DSP__
+#ifndef __CW_DSP__
+#define __CW_DSP__
 
-#include "Number.h"
+#include "cwNumber.h"
 
 #define CW_DSP_FFT_SAMPLE_LENGTH 1024
 #define CW_DSP_FFT_WINDOW_SIZE CW_DSP_FFT_SAMPLE_LENGTH
@@ -28,4 +28,4 @@ void cwDspComplexArrayMultiply(FPComplex *output, FPComplex *input1, FPComplex *
 void cwDspComplexArrayAdd(FPComplex *output, FPComplex *input1, FPComplex *input2, int length);
 void cwDspArrayMultiply(FPComplex *output, FPComplex *input1, NUMBER_TYPE *input2, int length);
 
-#endif /* defined(____CW_SP__) */
+#endif /* defined(__CW_DSP__) */

@@ -1,11 +1,11 @@
 //
-//  Number.h
+//  cwNumber.h
 //
 //  Created by Cahya Wirawan
 //
 
-#ifndef NUMBER_H
-#define NUMBER_H
+#ifndef __CW_NUMBER_H__
+#define __CW_NUMBER_H__
 
 #include <stdint.h>
 

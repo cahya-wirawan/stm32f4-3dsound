@@ -8,7 +8,6 @@
 
 #include <stdint.h>
 #include "cwDsp.h"
-#include "Number.h"
 #include "arm_math.h"
 
 

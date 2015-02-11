@@ -12,12 +12,12 @@
 #include "cwHrtfArray.h"
 #include "arm_math.h"
 
-int cwHRTFInit() {
+int cwHrtfInit() {
   cwDspInit(CW_DSP_FFT_SAMPLE_LENGTH);
   return 0;
 }
 
-void cwHRTFReadDb(cwHRTFStereoSignal *hrtfDb, float elevation, float azimuth, int sampleLength) {
+void cwHrtfReadDb(cwHrtfStereoSignal *hrtfDb, float elevation, float azimuth, int sampleLength) {
   int i, flip, hrtfElevationIndex, hrtfAzimuthIndex;
   const int16_t *tmpArray, *leftArray, *rightArray;
   
@@ -59,13 +59,13 @@ void cwHRTFReadDb(cwHRTFStereoSignal *hrtfDb, float elevation, float azimuth, in
   }
 }
 
-void cwHRTFSoundPosition(cwHRTFStereoSignal *stereoSignal, FPComplex *signal, int length, float elevation, float azimuth) {
+void cwHrtfSoundPosition(cwHrtfStereoSignal *stereoSignal, FPComplex *signal, int length, float elevation, float azimuth) {
   FPComplex fp1[CW_DSP_FFT_SAMPLE_LENGTH], fp2[CW_DSP_FFT_SAMPLE_LENGTH], fp3[CW_DSP_FFT_SAMPLE_LENGTH];
   
-  cwHRTFStereoSignal *hrtfDb;
+  cwHrtfStereoSignal *hrtfDb;
   
-  hrtfDb = (cwHRTFStereoSignal *)stereoSignal;
-  cwHRTFReadDb(hrtfDb, elevation, azimuth, length);
+  hrtfDb = (cwHrtfStereoSignal *)stereoSignal;
+  cwHrtfReadDb(hrtfDb, elevation, azimuth, length);
   cwDspZeros(fp1);
   cwDspFft(fp1, signal);
   

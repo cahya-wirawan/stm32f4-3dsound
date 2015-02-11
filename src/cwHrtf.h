@@ -14,10 +14,10 @@
 
 typedef struct {
   FPComplex left[CW_DSP_FFT_SAMPLE_LENGTH], right[CW_DSP_FFT_SAMPLE_LENGTH];
-} cwHRTFStereoSignal;
+} cwHrtfStereoSignal;
 
-int cwHRTFInit(void);
-void cwHRTFSoundPosition(cwHRTFStereoSignal *stereoSignal, FPComplex *signal, int length, float elevation, float azimuth);
-void cwHRTFGetDb(FPComplex **hrtfLeft, FPComplex **hrtfRight, float elevation, float azimuth, int sampleLength);
+int cwHrtfInit(void);
+void cwHrtfSoundPosition(cwHrtfStereoSignal *stereoSignal, FPComplex *signal, int length, float elevation, float azimuth);
+void cwHrtfGetDb(FPComplex **hrtfLeft, FPComplex **hrtfRight, float elevation, float azimuth, int sampleLength);
 
 #endif

@@ -19,7 +19,7 @@
 
 /**
  * @file      cwHrtf.c
- * @brief     Human Related Transfer Functions (HRTF) calculation
+ * @brief     Head Related Transfer Functions (HRTF) calculation
  * @details
  */
 

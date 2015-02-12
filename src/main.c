@@ -96,7 +96,8 @@ void hwInit() {
   }
   cwMemsInit();
   printf("\r\n");
-  printf("3D Sound Player (version %s) by Cahya Wirawan <cahya.wirawan@gmail.com>\r\n", CW_VERSION);
+  printf("3D Sound Player (version %s, date %s) by Cahya Wirawan <cahya.wirawan@gmail.com>\r\n",
+         CW_APP_VERSION, CW_APP_DATE);
   printf("Peripheries initialised\r\n");
   Delayms(1000);
 }

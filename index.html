@@ -40,6 +40,7 @@
   in-between is of course handled as well. Currently only the horizontal angle (azimuth) is taken into account for 
   the 3D sound effect calculation, but the next version will also include the vertical angle (elevation).
 </p>
+<img src="pictures/stm32f4-01.jpg" alt="STM32F4-Discovery board" style="width:600px;height:400px">
 <p>
   The application plays a waveform file from the root directory of a USB stick in a loop until the blue button 
   is pressed, which plays the next waveform file. Only a mono sound file with sample rate of 44100 Hz will be 
@@ -53,7 +54,7 @@
   is a response that characterises how an ear receives a sound from a point in space; a pair of HRTFs for two ears 
   can be used to synthesise a binaural sound that seems to come from a particular point in space. It is a transfer 
   function, describing how a sound from a specific point will arrive at the ear (generally at the outer end of the 
-  auditory canal)”. The HRTF measurements of a KEMAR dummy head microphone from MIT Media Lab has been used in 
+  auditory canal)”. The <a href="http://sound.media.mit.edu/resources/KEMAR.html">HRTF measurements</a> of a KEMAR dummy head microphone from MIT Media Lab has been used in 
   this application.
 </p>
 <p>

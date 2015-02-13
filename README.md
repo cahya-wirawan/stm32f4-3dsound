@@ -1,15 +1,13 @@
-# stm32f4-musicplayer
-STM32F4 template project with LED, USART, Button, MEMS and USB FATFS. It uses STM32F4 libraries created by Tilen Majerle (http://stm32f4-discovery.com/).
+# stm32f4-3dsound
 
-The application reads the MEMS position (about 3 times per second) in the main loop and print the values to USART2 
-(TX=PA2, RX=PA3, Baud=115200, 8N1). If the user blue button is klicked, a file (file_x.txt, x is a counter) will be created on the usb stick connected to the USB OTG.
+STM32F4-3DSound is an application that runs on a STM32F4-Discovery board for playing a waveform file with 3D sound effects. It reads a mono sound waveform file from a USB stick, and processes the sound samples in real-time to produce a three-dimensional sound effect, then sends the output to stereo headphones. The 3D sound effect is controlled by the spatial alignment of the board, which uses the MEMS motion sensor to determine its position. If the board is turned to the left, the sound will come from the left side, and vice versa. Any angle in-between is of course handled as well. Currently only the horizontal angle (azimuth) is taken into account for the 3D sound effect calculation, but the next version will also include the vertical angle (elevation).
 
-Usage:
+The application plays a waveform file from the root directory of a USB stick in a loop until the blue button is pressed, which plays the next waveform file. Only a mono sound file with sample rate of 44100 Hz will be accepted by the application, and headphones should be used to get the best result. Optionally, a serial connection (USART with TX=pin PA2, 115200 baud, 8N1) can be used to monitor the application (error messages, information about the waveform file to play, the angle position of the board, etc).
 
-$ git clone git@github.com:cahya-wirawan/stm32f4-template.git
+## Usage:
 
-$ cd stm32f4-template
-
+$ git clone git@github.com:cahya-wirawan/stm32f4-3dsound.git
+$ cd stm32f4-3dsound
 $ make
 
-the binary (stm32f4_template.bin, .hex, .elf) will be created in build directory.
+The binary (stm32f4_3dsound.bin, .hex, .elf) will be created in the build/ sub-directory. A pre-compiled binary can also be downloaded from this website.

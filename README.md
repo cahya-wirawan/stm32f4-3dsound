@@ -6,8 +6,8 @@ The application plays a waveform file from the root directory of a USB stick in 
 
 ## Usage:
 
-$ git clone git@github.com:cahya-wirawan/stm32f4-3dsound.git
-$ cd stm32f4-3dsound
+$ git clone git@github.com:cahya-wirawan/stm32f4-3dsound.git  
+$ cd stm32f4-3dsound  
 $ make
 
 The binary (stm32f4_3dsound.bin, .hex, .elf) will be created in the build/ sub-directory. A pre-compiled binary can also be downloaded from this website.

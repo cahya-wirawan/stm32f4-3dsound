@@ -23,7 +23,7 @@
 
         <ul>
           <li><a href="https://github.com/cahya-wirawan/stm32f4-3dsound/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://cahya-wirawan.github.io/stm32f4-3dsound/download/stm32f4-3dsound-0.1.bin.zip">Download <strong>Compiled Binary</strong></a></li>
+          <li><a href="https://cahya-wirawan.github.io/stm32f4-3dsound/download/stm32f4-3dsound-0.2.bin.zip">Download <strong>Compiled Binary</strong></a></li>
           <li><a href="https://github.com/cahya-wirawan/stm32f4-3dsound">View On <strong>GitHub</strong></a></li>
         </ul>
       </header>
@@ -34,11 +34,11 @@
 <p>
   STM32F4-3DSound is an application that runs on a STM32F4-Discovery board for playing a waveform file with 
   3D sound effects. It reads a mono sound waveform file from a USB stick, and processes the sound samples in 
-  real-time to produce a three-dimensional sound effect, then sends the output to stereo headphones. The 3D sound 
-  effect is controlled by the spatial alignment of the board, which uses the MEMS motion sensor to determine its 
-  position. If the board is turned to the left, the sound will come from the left side, and vice versa. Any angle
-  in-between is of course handled as well. Currently only the horizontal angle (azimuth) is taken into account for 
-  the 3D sound effect calculation, but the next version will also include the vertical angle (elevation).
+  real-time to produce a three-dimensional sound effect, then sends the output to stereo headphones. The direction of 
+  3D sound effect is controlled by the spatial alignment of the board, which uses the MEMS motion sensor to determine its 
+  position. The board can be rotated to the left, right, up and bottom, which will change the direction of the sound source.
+  The rotation of the horizontal angle (azimuth) is limited from -90&deg; (left) to 90&deg; (right), and vertical angle (elevation) 
+  from -40&deg; to 90&deg;. 
 </p>
 <img src="pictures/stm32f4-01.jpg" alt="STM32F4-Discovery board" style="width:450px;height:300px">
 <p>
@@ -77,7 +77,7 @@
 
 <p>
   The binary (stm32f4-3dsound.bin, .hex, .elf) will be created in the build/ sub-directory.
-  A <a href="https://cahya-wirawan.github.io/stm32f4-3dsound/download/stm32f4-3dsound-0.1.bin.zip">pre-compiled binary</a> can also be downloaded from this website.
+  A <a href="https://cahya-wirawan.github.io/stm32f4-3dsound/download/stm32f4-3dsound-0.2.bin.zip">pre-compiled binary</a> (version 0.2) can also be downloaded from this website.
 </p>
 
   

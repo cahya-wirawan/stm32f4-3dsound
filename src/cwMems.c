@@ -27,7 +27,8 @@
 #include "cwMems.h"
 #include "tm_stm32f4_lis302dl_lis3dsh.h"
 
-#define CW_MEMS_AZIMUTH_MAX 90
+#define CW_MEMS_AZIMUTH_MAX    90
+#define CW_MEMS_ELEVATION_MAX  90
 
 TM_LIS302DL_LIS3DSH_t cwMemsOffset;
 
@@ -45,4 +46,18 @@ float cwMemsGetAzimuth(void) {
   azimuth = (azimuth>1.0)? 1.0:((azimuth<-1.0)?-1.0:azimuth);
   azimuth *= CW_MEMS_AZIMUTH_MAX;
   return azimuth;
+}
+
+void cwMemsGetPosition(float *elevation, float *azimuth) {
+  
+  TM_LIS302DL_LIS3DSH_t axesData;
+  TM_LIS302DL_LIS3DSH_ReadAxes(&axesData);
+  
+  *azimuth = (float)(axesData.X - cwMemsOffset.X)/CW_MEMS_MAX_VALUE;
+  *azimuth = (*azimuth>1.0)? 1.0:((*azimuth<-1.0)?-1.0:*azimuth);
+  *azimuth *= CW_MEMS_AZIMUTH_MAX;
+  
+  *elevation = (float)(axesData.Y - cwMemsOffset.Y)/CW_MEMS_MAX_VALUE;
+  *elevation = (*elevation>1.0)? 1.0:((*elevation<-1.0)?-1.0:*elevation);
+  *elevation *= CW_MEMS_ELEVATION_MAX;
 }

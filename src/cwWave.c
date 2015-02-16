@@ -23,6 +23,7 @@
  * @details
  */
 
+#include "stdio.h"
 #include "string.h"
 #include "Audio.h"
 #include "cwSoundFile.h"
@@ -158,13 +159,20 @@ void cwWaveAudioCallback(void *context, int bufferNumber) {
     cwSFReadPtr += CW_WAVE_BYTES_TO_SEND;
   }
 #else
-  float azimuth = cwMemsGetAzimuth();
-  cwSound3DFillBuffer(audioBuffer, readPtr, azimuth, bufferNumber);
+  float elevation, azimuth;
+  static int counter = 0;
+  
+  cwMemsGetPosition(&elevation, &azimuth);
+  if(counter%50 == 0) {
+    printf("elevation: %3.2f, azimuth: %3.2f\r\n", (double)elevation, (double)azimuth);
+  }
+  counter++;
+  counter %= 50;
+  cwSound3DFillBuffer(audioBuffer, readPtr, elevation, azimuth, bufferNumber);
   
   byteSent = CW_WAVE_BYTES_TO_SEND;
   cwSFBytesLeft -= CW_WAVE_BYTES_TO_SEND;
   cwSFReadPtr += CW_WAVE_BYTES_TO_SEND;
-  
 #endif
   if (!outOfData) {
     ProvideAudioBuffer(audioBuffer, byteSent);

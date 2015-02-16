@@ -30,5 +30,6 @@
 
 void cwMemsInit(void);
 float cwMemsGetAzimuth(void);
+void cwMemsGetPosition(float *elevation, float *azimuth);
 
 #endif /* CW_MEMS_H_ */

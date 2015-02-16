@@ -40,7 +40,7 @@
 
 void cwSound3DPlayFile(char* filename);
 void cwSound3DAudioCallback(void *context,int buffer);
-void cwSound3DFillBuffer(int16_t * audioBuffer, int16_t *readPtr, float azimuth, int16_t bufferPosition);
+void cwSound3DFillBuffer(int16_t * audioBuffer, int16_t *readPtr, float elevation, float azimuth, int16_t bufferPosition);
 int16_t cwSound3DInit(void);
 void cwSound3DWindowsFunction(NUMBER_TYPE *buffer2, int16_t *buffer1, int32_t length);
 int32_t cwSound3DToComplexBuffer(NUMBER_TYPE *complexBuffer, NUMBER_TYPE *buffer, int32_t length);

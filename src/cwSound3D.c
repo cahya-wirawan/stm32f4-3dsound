@@ -51,7 +51,7 @@ int16_t cwSound3DInit(void) {
   return 1;
 }
 
-void cwSound3DFillBuffer(int16_t * audioBuffer, int16_t *readPtr, float azimuth, int16_t bufferNumber) {
+void cwSound3DFillBuffer(int16_t * audioBuffer, int16_t *readPtr, float elevation, float azimuth, int16_t bufferNumber) {
   NUMBER_TYPE buffer2[CW_DSP_FFT_SAMPLE_LENGTH];
   NUMBER_TYPE complexBuffer1[2*CW_DSP_FFT_SAMPLE_LENGTH];
   NUMBER_TYPE complexBuffer2[2*CW_DSP_FFT_SAMPLE_LENGTH];
@@ -60,7 +60,7 @@ void cwSound3DFillBuffer(int16_t * audioBuffer, int16_t *readPtr, float azimuth,
   
   cwSound3DToComplexBuffer(complexBuffer1, buffer2, CW_DSP_FFT_SAMPLE_LENGTH);
   
-  cwHrtfSoundPosition(&cwSound3DStereoSignal, (FPComplex *) complexBuffer1, CW_DSP_FFT_SAMPLE_LENGTH, 0, azimuth);
+  cwHrtfSoundPosition(&cwSound3DStereoSignal, (FPComplex *) complexBuffer1, CW_DSP_FFT_SAMPLE_LENGTH, elevation, azimuth);
   
   cwSound3DHRTFToComplexBuffer(complexBuffer2, &cwSound3DStereoSignal, CW_DSP_FFT_SAMPLE_LENGTH);
   
@@ -69,7 +69,7 @@ void cwSound3DFillBuffer(int16_t * audioBuffer, int16_t *readPtr, float azimuth,
     cwSound3DAddBuffer(cwSound3DDoubleBuffer, complexBuffer2, 2*CW_DSP_FFT_SAMPLE_LENGTH);
     cwSound3DWindowsFunction(buffer2, readPtr+CW_DSP_FFT_SAMPLE_LENGTH/2, CW_DSP_FFT_SAMPLE_LENGTH);
     cwSound3DToComplexBuffer(complexBuffer1, buffer2, CW_DSP_FFT_SAMPLE_LENGTH);
-    cwHrtfSoundPosition(&cwSound3DStereoSignal, (FPComplex *) complexBuffer1, CW_DSP_FFT_SAMPLE_LENGTH, 0, azimuth);
+    cwHrtfSoundPosition(&cwSound3DStereoSignal, (FPComplex *) complexBuffer1, CW_DSP_FFT_SAMPLE_LENGTH, elevation, azimuth);
     cwSound3DHRTFToComplexBuffer(complexBuffer2, &cwSound3DStereoSignal, CW_DSP_FFT_SAMPLE_LENGTH);
     cwSound3DAddBuffer(cwSound3DDoubleBuffer+CW_DSP_FFT_SAMPLE_LENGTH, complexBuffer2, 2*CW_DSP_FFT_SAMPLE_LENGTH);
     cwSound3DCopyToAudioBuffer(audioBuffer, cwSound3DDoubleBuffer, 2*CW_DSP_FFT_SAMPLE_LENGTH);
@@ -79,7 +79,7 @@ void cwSound3DFillBuffer(int16_t * audioBuffer, int16_t *readPtr, float azimuth,
     cwSound3DAddBuffer(cwSound3DDoubleBuffer+2*CW_DSP_FFT_SAMPLE_LENGTH, complexBuffer2, 2*CW_DSP_FFT_SAMPLE_LENGTH);
     cwSound3DWindowsFunction(buffer2, readPtr+CW_DSP_FFT_SAMPLE_LENGTH/2, CW_DSP_FFT_SAMPLE_LENGTH);
     cwSound3DToComplexBuffer(complexBuffer1, buffer2, CW_DSP_FFT_SAMPLE_LENGTH);
-    cwHrtfSoundPosition(&cwSound3DStereoSignal, (FPComplex *) complexBuffer1, CW_DSP_FFT_SAMPLE_LENGTH, 0, azimuth);
+    cwHrtfSoundPosition(&cwSound3DStereoSignal, (FPComplex *) complexBuffer1, CW_DSP_FFT_SAMPLE_LENGTH, elevation, azimuth);
     cwSound3DHRTFToComplexBuffer(complexBuffer2, &cwSound3DStereoSignal, CW_DSP_FFT_SAMPLE_LENGTH);
     cwSound3DAddBuffer(cwSound3DDoubleBuffer+3*CW_DSP_FFT_SAMPLE_LENGTH, complexBuffer2, CW_DSP_FFT_SAMPLE_LENGTH);
     cwSound3DAddBuffer(cwSound3DDoubleBuffer, complexBuffer2+CW_DSP_FFT_SAMPLE_LENGTH, CW_DSP_FFT_SAMPLE_LENGTH);

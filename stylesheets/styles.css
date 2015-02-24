@@ -93,6 +93,8 @@ th {
 
 img {
   max-width:100%;
+  -webkit-box-shadow: 3px 3px 3px #7C7C7C;
+  box-shadow: 3px 3px 3px #7C7C7C;
 }
 
 header {

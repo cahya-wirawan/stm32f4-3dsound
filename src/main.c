@@ -43,6 +43,7 @@
 #include "tm_stm32f4_usb_msc_host.h"
 #include "cwSoundFile.h"
 #include "cwMems.h"
+#include "cwHrtfArray.h"
 
 int main(void) {
   hwInit();
@@ -98,6 +99,7 @@ void hwInit() {
   printf("\r\n");
   printf("3D Sound Player (version %s, date %s) by Cahya Wirawan <cahya.wirawan@gmail.com>\r\n",
          CW_APP_VERSION, CW_APP_DATE);
+  printf("HRTF Database used: %s \r\n",CW_HRTF_ARRAY_NAME);
   printf("Peripheries initialised\r\n");
   Delayms(1000);
 }

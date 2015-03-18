@@ -25,9 +25,12 @@
 
 #include "stdint.h"
 
-#ifndef CW_HRTF_COMPLETE_DB
+// Choose only one of the following HRTF Database:
 
-#define CW_HRTF_ARRAY_LENGTH    128
+#define CW_HRTF_KEMAR_DIFFUSE
+//#define CW_HRTF_KEMAR_COMPLETE
+//#define CW_HRTF_PKU_IOA_20
+
 #define CW_HRTF_ELEVATION_MIN   -40
 #define CW_HRTF_ELEVATION_MAX    90
 #define CW_HRTF_ELEVATION_STEP   10
@@ -36,8 +39,29 @@
 
 #define CW_HRTF_FREQUENCY        10
 
+#ifdef CW_HRTF_KEMAR_COMPLETE
+
+#include "cwHrtfKemarCompact.h"
+
+#else
+
+#ifdef CW_HRTF_KEMAR_DIFFUSE
+
+#include "cwHrtfKemarDiffuse.h"
+
+#else
+
+#ifdef CW_HRTF_PKU_IOA_20
+
+#include "cwHrtfPKU-IOA-20.h"
+
+#endif /*CW_HRTF_PKU_IOA_20#*/
+
+#endif /*CW_HRTF_KEMAR_DIFFUSE#*/
+
+#endif /*CW_HRTF_KEMAR_COMPLETE*/
+
+
 extern const int16_t cwHrtfArrayAzimuthMax[];
 extern const int16_t cwHrtfArrayOffset[];
 extern const int16_t cwHrtfArray[][2][CW_HRTF_ARRAY_LENGTH];
-
-#endif

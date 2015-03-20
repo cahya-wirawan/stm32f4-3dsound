@@ -26,8 +26,8 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#define CW_APP_VERSION "0.2"
-#define CW_APP_DATE    "20150216"
+#define CW_APP_VERSION "0.3"
+#define CW_APP_DATE    "20150321"
 
 void hwInit();
 

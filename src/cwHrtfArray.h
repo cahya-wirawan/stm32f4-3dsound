@@ -30,6 +30,7 @@
 #define CW_HRTF_KEMAR_DIFFUSE
 //#define CW_HRTF_KEMAR_COMPLETE
 //#define CW_HRTF_PKU_IOA_20
+//#define CW_HRTF_PKU_IOA_130
 
 #define CW_HRTF_ELEVATION_MIN   -40
 #define CW_HRTF_ELEVATION_MAX    90
@@ -40,27 +41,20 @@
 #define CW_HRTF_FREQUENCY        10
 
 #ifdef CW_HRTF_KEMAR_COMPLETE
-
 #include "cwHrtfKemarCompact.h"
-
-#else
+#endif
 
 #ifdef CW_HRTF_KEMAR_DIFFUSE
-
 #include "cwHrtfKemarDiffuse.h"
-
-#else
+#endif
 
 #ifdef CW_HRTF_PKU_IOA_20
-
 #include "cwHrtfPKU-IOA-20.h"
+#endif
 
-#endif /*CW_HRTF_PKU_IOA_20#*/
-
-#endif /*CW_HRTF_KEMAR_DIFFUSE#*/
-
-#endif /*CW_HRTF_KEMAR_COMPLETE*/
-
+#ifdef CW_HRTF_PKU_IOA_130
+#include "cwHrtfPKU-IOA-130.h"
+#endif
 
 extern const int16_t cwHrtfArrayAzimuthMax[];
 extern const int16_t cwHrtfArrayOffset[];

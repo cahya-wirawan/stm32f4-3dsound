@@ -23,7 +23,7 @@
 
         <ul>
           <li><a href="https://github.com/cahya-wirawan/stm32f4-3dsound/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://cahya-wirawan.github.io/stm32f4-3dsound/download/stm32f4-3dsound-0.2.bin.zip">Download <strong>Compiled Binary</strong></a></li>
+          <li><a href="https://cahya-wirawan.github.io/stm32f4-3dsound/download/stm32f4-3dsound-0.3.bin.zip">Download <strong>Compiled Binary</strong></a></li>
           <li><a href="https://github.com/cahya-wirawan/stm32f4-3dsound">View On <strong>GitHub</strong></a></li>
         </ul>
       </header>
@@ -54,8 +54,12 @@
   is a response that characterises how an ear receives a sound from a point in space; a pair of HRTFs for two ears 
   can be used to synthesise a binaural sound that seems to come from a particular point in space. It is a transfer 
   function, describing how a sound from a specific point will arrive at the ear (generally at the outer end of the 
-  auditory canal)”</i>. The <a href="http://sound.media.mit.edu/resources/KEMAR.html">HRTF measurements</a> of a KEMAR dummy head microphone from MIT Media Lab has been used in 
-  this application.
+  auditory canal)”</i>.
+</p>
+<p> There are several HRTF measurements done by different universities
+and organizations. For this application I use the HRTF measurements of
+a <a href="http://sound.media.mit.edu/resources/KEMAR.html">KEMAR dummy head microphone from MIT Media Lab</a> and the HRTF
+measurements of <a href="http://www.cis.pku.edu.cn/auditory/Staff/Dr.Qu.files/Qu-HRTF-Database.html">Key Lab of Machine Perception (Ministry of Education), Peking University</a>.
 </p>
 <p>
   3D sound spatialisation is <a href="http://blog.codinghorror.com/3d-positional-audio-and-hrtfs/">a computationally expensive algorithm</a>, but nevertheless, a small inexpensive 
@@ -77,10 +81,31 @@
 
 <p>
   The binary (stm32f4-3dsound.bin, .hex, .elf) will be created in the build/ sub-directory.
-  A <a href="https://cahya-wirawan.github.io/stm32f4-3dsound/download/stm32f4-3dsound-0.2.bin.zip">pre-compiled binary</a> (version 0.2) can also be downloaded from this website.
+  A <a href="https://cahya-wirawan.github.io/stm32f4-3dsound/download/stm32f4-3dsound-0.3.bin.zip">pre-compiled binary</a> (version 0.3) can also be downloaded from this website.
 </p>
 
-  
+<p>There are four HRTF databases currently included in the source code. This database can be selected in cwHrtfArray.h:</p>
+<ol>
+    <li><dt>CW_HRTF_KEMAR_COMPLETE</dt></li>
+  <dl>
+    This is the original Kemar HRTF measurement including the measurement system response and the ear canal response. The HRTFs were measured at distance of 140 cm.
+  </dl>
+    <li><dt>CW_HRTF_KEMAR_DIFFUSE</dt></li>
+  <dl>
+    This is the Kemar HRTF measurement, where the measurement
+system response and the ear canal response are removed from the database. The HRTFs were measured at distance of 140 cm.<br>
+  </dl>
+    <li><dt>CW_HRTF_PKU_IOA_20</dt></li>
+  <dl>
+    This is the HRTF measurement of Key Lab of Machine Perception (Ministry of Education), Peking University. The HRTFs were measured at distance of 20 cm<br>
+  </dl>
+  <li><dt>CW_HRTF_PKU_IOA_130</dt></li>
+  <dl>
+    This is the HRTF measurement of Key Lab of Machine Perception (Ministry of Education), Peking University. The HRTFs were measured at distance of 130 cm.
+  </dl>
+</ol>
+
+<i>Note: The sample rate of HRTF measurement from Peking University is 65.536 Hz, but this application use sample rate of 44.100 Hz, therefore this HRTF measurement was resampled to 44.100 Hz</i>
 </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/cahya-wirawan">cahya-wirawan</a></p>
